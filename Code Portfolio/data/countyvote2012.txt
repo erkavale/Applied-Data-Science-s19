@@ -1,0 +1,101 @@
+"STNAME" "CTYNAME" "TOT_POP" "TOT_MALE" "TOT_FEMALE" "OBAMA" "ROMNEY"
+"Pennsylvania" "Northampton County" 300813 147711 153102 65014 59242
+"Ohio" "Henry County" 27816 13667 14149 5513 8111
+"Massachusetts" "Hampden County" 470690 227373 243317 7288 6870
+"Ohio" "Union County" 54277 25953 28324 8546 15947
+"Iowa" "Adair County" 7228 3553 3675 1788 2110
+"Tennessee" "Crockett County" 14601 6967 7634 1669 3782
+"Georgia" "Treutlen County" 6785 3425 3360 1068 1646
+"Indiana" "Owen County" 20872 10520 10352 2823 5062
+"Texas" "Sherman County" 3072 1608 1464 121 908
+"Virginia" "King and Queen County" 7158 3594 3564 1743 1863
+"Nebraska" "Deuel County" 1921 953 968 215 763
+"Illinois" "Fayette County" 22043 11738 10305 2848 5950
+"Kansas" "Kiowa County" 2564 1261 1303 160 970
+"Texas" "Aransas County" 25350 12600 12750 2703 6829
+"Georgia" "Peach County" 26720 12835 13885 6141 5280
+"Colorado" "Washington County" 4864 2524 2340 468 2076
+"Kentucky" "Elliott County" 7648 4302 3346 1186 1126
+"Connecticut" "Litchfield County" 183603 90563 93040 43856 47201
+"North Carolina" "Forsyth County" 369019 175295 193724 91606 79177
+"South Dakota" "Gregory County" 4201 2125 2076 599 1507
+"Texas" "Stephens County" 9440 4915 4525 475 2891
+"New York" "Saratoga County" 226249 111844 114405 48876 46829
+"Illinois" "McDonough County" 31333 15497 15836 5957 6142
+"West Virginia" "Boone County" 23372 11596 11776 2777 5414
+"Massachusetts" "Berkshire County" 127828 61824 66004 3010 818
+"Oregon" "Clackamas County" 401515 197260 204255 94013 87551
+"Arkansas" "Prairie County" 8291 4133 4158 877 2149
+"Kansas" "Lyon County" 33339 16287 17052 4972 6358
+"Alabama" "Clay County" 13555 6688 6867 1770 4802
+"Georgia" "DeKalb County" 734871 348701 386170 237704 64308
+"Colorado" "Montrose County" 40946 20150 20796 6138 13552
+"Michigan" "Washtenaw County" 358880 177499 181381 120791 56401
+"Kentucky" "Henry County" 15620 7747 7873 2529 3940
+"South Dakota" "Oglala Lakota County" 14373 6973 7400 2937 188
+"Texas" "Kimble County" 4388 2180 2208 217 1667
+"Alabama" "Washington County" 16804 8160 8644 2971 5749
+"Montana" "Treasure County" 697 361 336 114 317
+"Georgia" "Lowndes County" 112865 55293 57572 17118 21176
+"Kansas" "Sumner County" 23535 11704 11831 2617 6162
+"Georgia" "Jenkins County" 8957 4769 4188 1424 1634
+"Nebraska" "Lincoln County" 35656 17649 18007 4350 10545
+"Ohio" "Hardin County" 31682 15674 16008 4487 7337
+"Oklahoma" "Pushmataha County" 11183 5509 5674 1043 3087
+"Illinois" "Calhoun County" 4899 2460 2439 1079 1439
+"Oklahoma" "Bryan County" 44884 21882 23002 3533 9188
+"Texas" "Goliad County" 7531 3761 3770 1127 2294
+"California" "Yuba County" 74492 37860 36632 5817 8746
+"Kentucky" "Marshall County" 31101 15275 15826 5022 10402
+"Nevada" "Elko County" 51935 27068 24867 3510 12013
+"South Carolina" "York County" 251195 121283 129912 39131 59546
+"Pennsylvania" "Armstrong County" 67052 33310 33742 8694 19231
+"Florida" "Polk County" 650092 318510 331582 114622 131577
+"Florida" "Flagler County" 105392 50600 54792 23207 26969
+"Minnesota" "Steele County" 36755 18175 18580 8706 9903
+"California" "San Francisco County" 864816 440682 424134 267857 42654
+"Florida" "Baker County" 27420 14346 13074 2011 8975
+"North Carolina" "Columbus County" 56694 28007 28687 10973 12863
+"Iowa" "Des Moines County" 40055 19666 20389 11873 8130
+"Georgia" "Calhoun County" 6479 3918 2561 1297 883
+"North Carolina" "Tyrrell County" 4070 2189 1881 835 929
+"Utah" "Emery County" 10370 5255 5115 569 3777
+"Iowa" "Allamakee County" 13886 7079 6807 3511 3230
+"Florida" "Liberty County" 8331 5144 3187 942 2301
+"Kentucky" "Barren County" 43570 21162 22408 5400 10922
+"Alaska" "North Slope Borough" 9687 6057 3630 1200 558
+"Mississippi" "Adams County" 31254 15785 15469 7999 5542
+"South Carolina" "Orangeburg County" 89208 41681 47527 30720 12022
+"New York" "Monroe County" 749600 362121 387479 178491 124769
+"Georgia" "Fulton County" 1010562 489092 521470 250514 135672
+"North Carolina" "Transylvania County" 33211 16088 17123 6740 9522
+"Colorado" "Delta County" 29979 15021 14958 4542 10762
+"Louisiana" "Terrebonne Parish" 113972 56374 57598 12071 29500
+"Michigan" "Lapeer County" 88373 44790 43583 18786 23725
+"Indiana" "Floyd County" 76778 37280 39498 14805 19868
+"Florida" "Walton County" 63508 32184 31324 6671 21490
+"Nebraska" "Thurston County" 7064 3466 3598 1153 823
+"Nebraska" "Knox County" 8543 4193 4350 1055 2878
+"Colorado" "Prowers County" 11954 5977 5977 1498 3200
+"South Dakota" "Campbell County" 1397 728 669 153 616
+"Kansas" "Jackson County" 13338 6706 6632 1870 3476
+"Illinois" "Jackson County" 59362 29825 29537 11306 9130
+"Kentucky" "Mercer County" 21407 10507 10900 2966 6820
+"Nebraska" "Blaine County" 487 248 239 29 268
+"Georgia" "Monroe County" 27103 13638 13465 3779 8352
+"Minnesota" "Mower County" 39116 19581 19535 11129 6938
+"Iowa" "Shelby County" 11927 5860 6067 2468 3903
+"Georgia" "Decatur County" 27174 13282 13892 4580 5816
+"Virginia" "Fauquier County" 68782 33974 34808 13891 20955
+"Texas" "Robertson County" 16659 8232 8427 2792 4416
+"Virginia" "Alleghany County" 15677 7687 7990 3403 3595
+"Illinois" "Warren County" 17527 8575 8952 3893 3460
+"Oklahoma" "Dewey County" 4995 2451 2544 301 1769
+"Pennsylvania" "Fayette County" 133628 65958 67670 21841 25845
+"Kansas" "Phillips County" 5428 2683 2745 376 2116
+"Missouri" "St. Louis County" 1003362 475350 528012 294735 223102
+"Virginia" "Charles City County" 7040 3446 3594 2772 1396
+"Oklahoma" "Harper County" 3754 1848 1906 173 1261
+"Michigan" "Manistee County" 24461 12638 11823 6467 5736
+"Missouri" "Putnam County" 4858 2471 2387 587 1673
+"Arizona" "Maricopa County" 4167947 2059860 2108087 512008 654835

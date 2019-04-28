@@ -1,0 +1,287 @@
+---
+title: "Final Project - Applied Data Science Spring 19"
+author: "Eric Kavales"
+date: "April 22, 2019"
+output: html_document
+---
+
+```{r include=FALSE}
+#load packages
+library(tidyverse)
+library(cluster)
+library(factoextra)
+#Load dataset
+gapminder19=read.csv("gapminder.csv", header=TRUE)
+```
+
+## Gapminder data set
+The data is from gapminder.csv, located in [Final Project Folder](https://github.com/erkavale/Applied-Data-Science-s19) and is not from the gapminder set available in R.
+
+## Research questions
+#### There are many things, in this dataset, that are of interest.
+#### We will focus on the following questions:  
+##### How has population changed over time?  
+-Were there any dramatic changes or do all regions experience something similar?  
+
+##### Is life expectancy the same for all regions of the world?  
+
+##### How has life expectancy changed over time per region?  
+-Were there any dramatic changes?  
+-Did all regions experience the same changes, if any?
+
+##### Can income predict life expectancy?  
+
+##### Does income have an effect on life expectancy?  
+-If so, in which region would one want to live to maximize income and life expectancy?
+  
+```{r include=FALSE}
+#inspect data
+str(gapminder19)
+#str() shows population as factor not numeric-convert to numeric
+#because population should not be categorical
+gapminder19$population<-as.numeric(gsub("\\,","",gapminder19$population))
+#Verify 
+str(gapminder19)
+```
+```{r include=FALSE}
+#how many NA values
+table(is.na(gapminder19$Country))
+table(is.na(gapminder19$Year))
+table(is.na(gapminder19$life))
+table(is.na(gapminder19$population))
+table(is.na(gapminder19$income))
+table(is.na(gapminder19$region))
+```
+
+### Summary of data
+Gapminder contains six variables: Country, Year, life (life expectancy), population, income (per capita), and region. It has 41284 observations. Missing values are located in population (25817 N/A values) and income (2341 N/A values).  
+Upon inspection, population was of type factor. This needed to be changed as it should not be a categorical variable. 
+
+## Analysis of Data
+```{r echo=FALSE}
+#group by year and region and summarize population,
+#life expectancy, and income
+by_year_region<- gapminder19 %>%
+  group_by(Year, region) %>%
+  summarize(total_Pop=sum(population, na.rm=TRUE), Ave_life_exp=mean(life), median_income=median(income, na.rm=TRUE))
+```
+```{r echo=FALSE}
+#graph of population from 1800-2015 
+by_year_region %>%
+  filter(total_Pop > 0)%>%
+  ggplot(aes(x=Year, y=total_Pop, color=region))+
+  geom_point()+
+  ggtitle("Total Population by region 1800-2015")
+```
+
+This plot shows us that most regions are following an exponential growth curve, with the exception on Europe & Central Asia. Their population slightly declined in the 1990s and has resumed growth but at a much lower pace. There is no way to determine, from this data set, why their population growth has slowed. In just the last decade the population of Sub-Saharan Africa has overtaken America and Europe & Central Asia, and it is now the third most populous region.  
+
+```{r echo=FALSE}
+#density of population is so right skewed you can barely see it 
+#it's not worth displaying the plot
+#let's try transforming with log10
+gapminder19 %>%
+  filter(population>0)%>%
+  ggplot(aes(x=population))+
+  geom_density(fill='blue',alpha=.5)+
+  scale_x_log10()+
+  ggtitle("Distribution of population transformed with log")
+```
+
+The above graph shows the distribution of population on a log10 scale. The distribution of the population was so right skewed that it was not worth displaying the graph and is most likely not normal. This graph appears to be close to normal but let us verify with the below Q-Q plots.  
+
+```{r echo=FALSE}
+qqnorm(gapminder19$population, main="Q-Q Plot of population 1800-2015")
+```
+
+As hypothesized, the distribution of the population is not normal.  
+
+```{r echo=FALSE}
+qqnorm(log(gapminder19$population), main="Q-Q Plot of log of population 1800-2015")
+```
+
+This log10 scale is approximately normal and it would be safe to do statistical inference if one chose to do so.  
+
+```{r echo=FALSE}
+#Graph of life expectancy over time by region 
+by_year_region%>%
+  ggplot(aes(x=Year,y=Ave_life_exp, color=region))+
+  geom_line()+
+  ggtitle("Life expectancy by region 1800-2015")
+```
+
+We can see that life expextancy has increased very much over time, except for the drops near 1915-1920 range and 1940-45 range. 
+This could be due to poor data recording but it is more likely that it is reflecting the massive loss of life during World War 1 and 2.  
+
+
+
+##### We can see from the above plots that population growth data is complete from 1950 to 2015 and life expectancy increases the most from 1950 to 2015. We will focus on this time range for the remained of the analysis.  
+
+```{r echo=FALSE}
+#Since life expectancy has increased the most from 1950 to 2015
+#let us concentrate on that time frame and look at distribution
+by_year_region %>%
+  filter(Year>1949)%>%
+  ggplot(aes(x=region, y= Ave_life_exp))+
+  geom_boxplot()+
+  ggtitle("Box plots of life expectancy by region 1950-2015")+
+  theme(axis.text.x = element_text(angle=90))
+```
+
+The above distributions tell us that Europe and Central Asia have the highest average life expectancy, with a comparatively small range. America comes in a close second, and has a larger range.
+
+
+
+```{r echo=FALSE}
+#how does that compare with income per region?
+by_year_region %>%
+  filter(Year>1949) %>%
+  ggplot(aes(x=region, y= median_income))+
+  geom_boxplot()+
+  ggtitle("Box plots of median income by region 1950-2015")+
+  theme(axis.text.x = element_text(angle=90))
+```
+
+This plot clearly shows that Europe and Central Asia have the highest median income. The next closest, Middle East & North Africa, are several thousand dollars lower, with America following a similar drop to take third. Sub-Saharan Africa appears to have almost no range in income.
+
+It appears the is a link between median income and average life expectancy. To be sure let us calculate the correclation coefficient.  
+
+```{r echo=FALSE}
+#let's explore the correlation between income and longevity.
+year_1950to2015<-as.data.frame(by_year_region)%>%
+  filter(Year>1949)
+cor_income_life<-cor(year_1950to2015$median_income, year_1950to2015$Ave_life_exp)
+```
+
+With a value of `r cor_income_life`  there appears to be a strong positive correlation between life expectancy and income. 
+
+**Now let us use regression analysis to see if income can predict life expectancy.**
+
+```{r echo=FALSE}
+#creating variables to simplify code
+log_income<-log(year_1950to2015$median_income)
+life_exp<-year_1950to2015$Ave_life_exp
+```
+```{r echo=FALSE}
+#checking distribution of response variable
+year_1950to2015 %>%
+  ggplot(aes(x=life_exp))+
+  geom_histogram(bins=25)+
+  ggtitle("Distribution of life expectancy 1950 to 2015")
+```
+
+The distribution of our response variable is left skewed and bimodal. Regression will probably not work on this variable but let us test to find out.  
+
+```{r echo=FALSE}
+#Regression model
+gap_glm<-glm(Ave_life_exp ~ median_income, data=year_1950to2015, family = 'gaussian')
+#generating predicted values
+gap_pred<-data.frame(median_income=seq(from=967.5, to=25933.5, length=10))
+gap_pred$predicted<-predict(gap_glm, gap_pred)
+#visualize plot and regression line
+year_1950to2015 %>%
+  ggplot(aes(x=median_income, y=Ave_life_exp, color=region))+
+  geom_point()+
+  geom_line(aes(x=median_income, y=predicted), data=gap_pred, color="red")+
+  ggtitle("Regression plot of Median Income vs 
+  Average Life Expectancy 1950-2015")
+```
+
+The regression line does seem to fit the data somewhat. We should verify using a residuals vs fitted plot.  
+
+```{r echo=FALSE}
+#check for homogeneity
+rvf<-data.frame(residuals=resid(gap_glm), fitted=fitted(gap_glm))
+#residuals v fitted plot
+rvf %>%
+  ggplot(aes(x=fitted, y=residuals))+
+  geom_point()+
+  ggtitle("Residuals vs Fitted plot for Median Income vs 
+  Average Life Expectancy regression model")
+```
+
+The residual vs fitted plot shows a definite pattern. Heterogeneity is present. Due to this plot and the distribution plot we can see that the assumptions of normality and constant variance are violated. This model is not a good fit for the data. Let us try a log transformation to see if this improves our ability to do regression.  
+
+```{r echo=FALSE}
+qqnorm(log_income, main='Q-Q Plot of Log of Median Income 1950-2015')
+```
+
+Transforming median income shows a much closer to normal distribution. This should allow us to proceed.  
+
+```{r echo=FALSE}
+#try transforming with log and predict values
+log_glm<-glm(life_exp ~ log_income, family='gaussian')
+#generating predicted values
+log_pred<-data.frame(log_income=seq(from=6.87,to=10.16, length=10))
+log_pred$predicted<-predict(log_glm, log_pred)
+#visualize plot and regression line
+
+year_1950to2015 %>%
+  ggplot(aes(x=log_income, y=life_exp))+
+  geom_point()+
+  geom_line(aes(x=log_income, y=predicted), data=log_pred, color="orange")+
+  ggtitle('Regression plot of Log of Median Income vs 
+  Average Life Expectancy 1950-2015')
+```
+
+The regression look much better than previous and may allow us to predict life expectancy using income. Let us verify with a residuals vs fitted plot.  
+
+```{r echo=FALSE}
+#check for homogeneity
+rvf_log<-data.frame(residuals=resid(log_glm), fitted=fitted(log_glm))
+#residuals v fitted plot
+rvf_log %>%
+  ggplot(aes(x=fitted, y=residuals))+
+  geom_point(color='blue')+
+  ggtitle("Residuals vs Fitted plot for log of Median Income vs 
+  Average Life Expectancy regression model")
+```
+
+Transformation did not help get much closer to homogeneity.  
+Model not a good fit. Variance assumption violated.  
+
+It does appear that you are more likely to live longer if you have a higher
+income, but overall it does not appear that earning a particular income
+will predict your life expenctancy.  
+Let's look at a K-means cluster to see if we can further determine how income might affect life expectancy.  
+
+```{r echo=FALSE}
+#K means
+#preparing data
+k_gap<-year_1950to2015 %>%
+  select(Ave_life_exp, median_income)
+#remove missing values
+k_gap<-na.omit(k_gap)
+#Scale
+k_gap<-scale(k_gap)
+
+#Choose clusters with elbow method
+wss<-function(k){
+  kmeans(k_gap, k, nstart=10)$tot.withinss
+}
+#Compute and plot wss for k=1 to k=15
+k_values<-1:15
+#extract wss for 2-15 clusters
+wss_values<-map_dbl(k_values, wss)
+#Visualize to select clusters
+plot(k_values, wss_values, type="b", pch=19, frame=FALSE,
+     xlab='Number of clusters K', 
+     ylab='Total within_clusters sum of squares', 
+     main="Elbow plot to determine appropriate number of clusters")
+```
+
+We can see from the above elbow plot that the optimal number of clusters is 3.  
+
+```{r echo=FALSE}
+#Cluster visualization
+gap_final<-kmeans(k_gap, 3, nstart=25)
+fviz_cluster(gap_final, data=k_gap, main="Cluster Plot of Income and Life Expectancy")
+```
+
+The K-means grouping shows us 3 distinct groups and does help shed some light on why income is not a good predictor of life expectancy. It shows that it reinforces the correlation we found earlier. We can see that those that earn the least tend to live the shortest, and that those that earn the most tend to live the longest. But it also shows that life expectancy can increase without an increase in income. In group two you can also see that income starts to rise rapidly with almost no increase in life expectancy.  
+
+#Summary of Analysis
+  Through analysis, I discovered many things about the gapminder data. The population for every region has increased over time with most regions past the elbow of an exponential growth curve. The exception is Europe and Central Asia. That region went from the second most populous, to the fifth. They had a slight decline in the 1990s but resumed growth again around 2000. Their growth is not as rapid as the other areas, and that is the reason for their decline in rank despite no real decline in population.  
+  Contrary to their drop in population rank, Europe and Central Asia have been at the top of the life expectancy ranking since at least 1950. Outside of the two major drops around World War 1 and 2, life expectancy has been on a similar rise as population. We cannot be sure the dips were cause by the wars because America doesn't seem to decline in those time periods, which they probabky should. South Asia, which was the lowest in average life expectancy for almost 150 years, is now the second highest. More research is needed to determine why, but it would be very interesting to find out how and why this is so.  
+  It does not appear that income is a good predictor of life expectancy. However, we can make some generalizations about the relations ship between the two. The more money you make the more likely you are to live longer. The less you make the more likely you are to have a lower life expectancy. But you can also increase life expectancy regardless of income. Sub-Saharan Africa, for example, is the lowest income but has increased their average life expectancy by 20 years, with virtually no change in income. Therefor income does not predict life expectancy outside of some loose generalizations.  
+  If you would like to have a longe life and high income, it would be best to work and live in the Europe and Central Asia region, as they rank highest in both. 

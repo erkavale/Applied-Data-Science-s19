@@ -10,6 +10,7 @@ output: html_document
 library(tidyverse)
 library(cluster)
 library(factoextra)
+
 #Load dataset
 gapminder19=read.csv("gapminder.csv", header=TRUE)
 ```
@@ -52,10 +53,21 @@ table(is.na(gapminder19$population))
 table(is.na(gapminder19$income))
 table(is.na(gapminder19$region))
 ```
+```{r echo=FALSE}
+gapminder19<-gapminder19 %>%
+  fill(population)
+```
 
 ### Summary of data
-Gapminder contains six variables: Country, Year, life (life expectancy), population, income (per capita), and region. It has 41284 observations. Missing values are located in population (25817 N/A values) and income (2341 N/A values).  
+Gapminder contains six variables: Country, Year, life (life expectancy), population, income (per capita), and region. It has 41284 observations. Missing values are located in population (25817 N/A values) and income (2341 N/A values). Their types are factor, int, num, factor, int, and factor respectively. 
+Year ranges from 1800 to 2015.  
+life ranges from 1 to 84.1  
+population ranges from 1,548 to 1.37 billion
+income ranges from 142 to 182668
+
+### Wrangling of data
 Upon inspection, population was of type factor. This needed to be changed as it should not be a categorical variable. 
+I also altered the data in the variable population. Before 1950, data was only recorded every 10 years. I added the previous year to the next until the next data point, using fill(). 
 
 ## Analysis of Data
 ```{r echo=FALSE}
@@ -68,7 +80,6 @@ by_year_region<- gapminder19 %>%
 ```{r echo=FALSE}
 #graph of population from 1800-2015 
 by_year_region %>%
-  filter(total_Pop > 0)%>%
   ggplot(aes(x=Year, y=total_Pop, color=region))+
   geom_point()+
   ggtitle("Total Population by region 1800-2015")
@@ -81,7 +92,6 @@ This plot shows us that most regions are following an exponential growth curve, 
 #it's not worth displaying the plot
 #let's try transforming with log10
 gapminder19 %>%
-  filter(population>0)%>%
   ggplot(aes(x=population))+
   geom_density(fill='blue',alpha=.5)+
   scale_x_log10()+
@@ -155,8 +165,7 @@ cor_income_life<-cor(year_1950to2015$median_income, year_1950to2015$Ave_life_exp
 
 With a value of `r cor_income_life`  there appears to be a strong positive correlation between life expectancy and income. 
 
-**Now let us use regression analysis to see if income can predict life expectancy.**
-
+**Now let us use regression analysis to see if income (independent variable) can predict life expectancy (dependent variable). **
 ```{r echo=FALSE}
 #creating variables to simplify code
 log_income<-log(year_1950to2015$median_income)
@@ -170,22 +179,34 @@ year_1950to2015 %>%
   ggtitle("Distribution of life expectancy 1950 to 2015")
 ```
 
-The distribution of our response variable is left skewed and bimodal. Regression will probably not work on this variable but let us test to find out.  
+The distribution of our dependent variable is left skewed and bimodal. Regression will probably not work on this variable but let us test to find out.  
+Let's first look at the regression summary table.  
 
 ```{r echo=FALSE}
 #Regression model
-gap_glm<-glm(Ave_life_exp ~ median_income, data=year_1950to2015, family = 'gaussian')
+gap_glm<-lm(Ave_life_exp ~ median_income, data=year_1950to2015)
 #generating predicted values
 gap_pred<-data.frame(median_income=seq(from=967.5, to=25933.5, length=10))
 gap_pred$predicted<-predict(gap_glm, gap_pred)
+#Regression table
+summary(gap_glm)
+```
+
+The regression line is built using 
+life_exp=54.53 + .00128(income)
+
+The p-values of the intercept and slope are basically 0, indicating these variables have statistical significance. 
+
+```{r echo=FALSE}
 #visualize plot and regression line
 year_1950to2015 %>%
   ggplot(aes(x=median_income, y=Ave_life_exp, color=region))+
   geom_point()+
-  geom_line(aes(x=median_income, y=predicted), data=gap_pred, color="red")+
+  geom_line(aes(x=median_income, y=predicted), data=gap_pred, color="orange")+
   ggtitle("Regression plot of Median Income vs 
   Average Life Expectancy 1950-2015")
 ```
+
 
 The regression line does seem to fit the data somewhat. We should verify using a residuals vs fitted plot.  
 

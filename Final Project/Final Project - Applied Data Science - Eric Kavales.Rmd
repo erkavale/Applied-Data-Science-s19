@@ -16,7 +16,7 @@ gapminder19=read.csv("gapminder.csv", header=TRUE)
 ```
 
 ## Gapminder data set
-The data is from gapminder.csv, located in [Final Project Folder](https://github.com/erkavale/Applied-Data-Science-s19) and is not from the gapminder set available in R.
+The data is from gapminder.csv, located in [Final Project Folder](https://github.com/erkavale/Applied-Data-Science-s19/tree/master/Final%20Project) and is not from the gapminder set available in R.
 
 ## Research questions
 #### There are many things, in this dataset, that are of interest.
